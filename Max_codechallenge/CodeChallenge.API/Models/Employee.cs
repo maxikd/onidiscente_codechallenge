@@ -1,4 +1,6 @@
-﻿namespace CodeChallenge.API.Models
+﻿using System;
+
+namespace CodeChallenge.API.Models
 {
     public class Employee
     {
@@ -6,5 +8,7 @@
         public string LastName { get; set; }
         public string JobTitle { get; set; }
         public string Address { get; set; }
+
+        public Guid DepartmentId { get; set; }
     }
 }

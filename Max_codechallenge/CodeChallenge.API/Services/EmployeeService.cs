@@ -1,5 +1,6 @@
 ﻿using CodeChallenge.API.Models;
 using CodeChallenge.API.Services.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,15 +30,19 @@ namespace CodeChallenge.API.Services
 
         private void MockData()
         {
-            var ricardo = MockEmployee("Ricardo", "Valle", "CEO", "Petrópolis, RJ");
-            var livia = MockEmployee("Livia", "Nutri", "Nutricionista", "São Paulo, SP");
-            var caio = MockEmployee("Caio", "Bulgarelli", "CTO", "Vancouver, BC");
-            var erika = MockEmployee("Erika", "Lobo", "Dev", "Rio de Janeiro, RJ");
-            var max = MockEmployee("Maximilian", "Deister", "Dev", "Rio de Janeiro, RJ");
+            Guid admId = Guid.NewGuid(),
+                 nutriId = Guid.NewGuid(),
+                 techId = Guid.NewGuid();
 
-            var adm = MockDepartment("Administração", ricardo);
-            var nutri = MockDepartment("Nutrição", livia);
-            var tech = MockDepartment("Tecnologia", caio, erika, max);
+            var ricardo = MockEmployee("Ricardo", "Valle", "CEO", "Petrópolis, RJ", admId);
+            var livia = MockEmployee("Livia", "Nutri", "Nutricionista", "São Paulo, SP", nutriId);
+            var caio = MockEmployee("Caio", "Bulgarelli", "CTO", "Vancouver, BC", techId);
+            var erika = MockEmployee("Erika", "Lobo", "Dev", "Rio de Janeiro, RJ", techId);
+            var max = MockEmployee("Maximilian", "Deister", "Dev", "Rio de Janeiro, RJ", techId);
+
+            var adm = MockDepartment(admId, "Administração", ricardo);
+            var nutri = MockDepartment(nutriId, "Nutrição", livia);
+            var tech = MockDepartment(techId, "Tecnologia", caio, erika, max);
 
             _departments.Add(adm);
             _departments.Add(nutri);
@@ -45,11 +50,13 @@ namespace CodeChallenge.API.Services
         }
 
         private Department MockDepartment(
+            Guid id,
             string name,
             params Employee[] employees)
         {
             var department = new Department
             {
+                Id = id,
                 Name = name,
                 Employees = employees
             };
@@ -61,14 +68,16 @@ namespace CodeChallenge.API.Services
             string firstName,
             string lastName,
             string job,
-            string address)
+            string address,
+            Guid departmentId)
         {
             var employee = new Employee
             {
                 Address = address,
                 FirstName = firstName,
                 JobTitle = job,
-                LastName = lastName
+                LastName = lastName,
+                DepartmentId = departmentId
             };
 
             return employee;
