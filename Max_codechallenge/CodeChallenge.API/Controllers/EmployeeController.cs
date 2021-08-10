@@ -9,7 +9,7 @@ namespace CodeChallenge.API.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class EmployeeController
+    public class EmployeeController : ControllerBase
     {
         public EmployeeController(
             IEmployeeService employeeService)
@@ -25,7 +25,7 @@ namespace CodeChallenge.API.Controllers
         {
             var employees = EmployeeService.GetAll();
 
-            return new OkObjectResult(employees);
+            return Ok(employees);
         }
 
         [HttpGet]
@@ -34,13 +34,13 @@ namespace CodeChallenge.API.Controllers
             Guid departmentId)
         {
             if (departmentId == Guid.Empty)
-                return new BadRequestResult();
+                return BadRequest("Invalid departmentId");
 
             var employees = EmployeeService.ListAll();
 
             var filteredEmployees = employees.Where(e => e.DepartmentId == departmentId);
 
-            return new OkObjectResult(filteredEmployees);
+            return Ok(filteredEmployees);
         }
     }
 }

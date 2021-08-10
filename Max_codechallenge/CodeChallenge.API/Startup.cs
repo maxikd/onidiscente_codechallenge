@@ -1,3 +1,5 @@
+using CodeChallenge.API.Repositories;
+using CodeChallenge.API.Repositories.Abstractions;
 using CodeChallenge.API.Services;
 using CodeChallenge.API.Services.Abstractions;
 using Microsoft.AspNetCore.Builder;
@@ -24,7 +26,8 @@ namespace CodeChallenge.API
             services.AddControllers();
 
             //Added as Singleton for tests purpose only
-            services.AddSingleton<IEmployeeService, EmployeeService>();
+            services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
         }
 
         public void Configure(

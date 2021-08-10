@@ -1,4 +1,4 @@
-﻿using CodeChallenge.API.Models;
+﻿using CodeChallenge.API.Repositories.Abstractions;
 using CodeChallenge.API.Services.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -8,79 +8,38 @@ namespace CodeChallenge.API.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private List<Department> _departments;
-
-        public EmployeeService()
+        public EmployeeService(
+            IEmployeeRepository employeeRepository)
         {
-            _departments = new List<Department>();
-            MockData();
+            EmployeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
         }
 
-        public IEnumerable<Employee> GetAll()
+        public IEmployeeRepository EmployeeRepository { get; }
+
+        public IEnumerable<Models.Employee> GetAll()
         {
-            return _departments.SelectMany(d => d.Employees);
+            return EmployeeRepository.GetAll()
+                .Select(e => MapEmployee(e));
         }
 
-        public IList<Employee> ListAll()
+        public IList<Models.Employee> ListAll()
         {
-            var employees = new List<Employee>(GetAll());
-
-            return employees;
+            return EmployeeRepository.ListAll()
+                .Select(e => MapEmployee(e))
+                .ToList();
         }
 
-        private void MockData()
+        private Models.Employee MapEmployee(
+            Entities.Employee employee)
         {
-            Guid admId = Guid.NewGuid(),
-                 nutriId = Guid.NewGuid(),
-                 techId = Guid.NewGuid();
-
-            var ricardo = MockEmployee("Ricardo", "Valle", "CEO", "Petrópolis, RJ", admId);
-            var livia = MockEmployee("Livia", "Nutri", "Nutricionista", "São Paulo, SP", nutriId);
-            var caio = MockEmployee("Caio", "Bulgarelli", "CTO", "Vancouver, BC", techId);
-            var erika = MockEmployee("Erika", "Lobo", "Dev", "Rio de Janeiro, RJ", techId);
-            var max = MockEmployee("Maximilian", "Deister", "Dev", "Rio de Janeiro, RJ", techId);
-
-            var adm = MockDepartment(admId, "Administração", ricardo);
-            var nutri = MockDepartment(nutriId, "Nutrição", livia);
-            var tech = MockDepartment(techId, "Tecnologia", caio, erika, max);
-
-            _departments.Add(adm);
-            _departments.Add(nutri);
-            _departments.Add(tech);
-        }
-
-        private Department MockDepartment(
-            Guid id,
-            string name,
-            params Employee[] employees)
-        {
-            var department = new Department
+            return new Models.Employee
             {
-                Id = id,
-                Name = name,
-                Employees = employees
+                Address = employee.Address,
+                DepartmentId = employee.DepartmentId,
+                FirstName = employee.FirstName,
+                JobTitle = employee.JobTitle,
+                LastName = employee.LastName
             };
-
-            return department;
-        }
-
-        private Employee MockEmployee(
-            string firstName,
-            string lastName,
-            string job,
-            string address,
-            Guid departmentId)
-        {
-            var employee = new Employee
-            {
-                Address = address,
-                FirstName = firstName,
-                JobTitle = job,
-                LastName = lastName,
-                DepartmentId = departmentId
-            };
-
-            return employee;
         }
     }
 }
