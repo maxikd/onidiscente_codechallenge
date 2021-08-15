@@ -26,7 +26,7 @@ namespace CodeChallenge.API
             services.AddControllers();
 
             //Added as Singleton for tests purpose only
-            services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+            services.AddSingleton<IEmployeeRepository, EmployeeDatabaseRepository>();
             services.AddScoped<IEmployeeService, EmployeeService>();
         }
 
